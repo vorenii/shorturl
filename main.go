@@ -27,8 +27,13 @@ func ExpandEndpoint(w http.ResponseWriter, req *http.Request) {
 
 func CreateEndpoint(w http.ResponseWriter, req *http.Request) {
 	var url MyUrl
-	_ = json.NewDecoder(req.Body).Decode(&url)
-	var n1qlParams []interface{}
+	err := json.NewDecoder(req.Body).Decode(&url)
+	if err != nil {
+		w.WriteHeader(401)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	n1qlParams := []interface{}{}
 	n1qlParams = append(n1qlParams, url.LongUrl)
 	query := gocb.NewN1qlQuery("SELECT `" + bucketName + "`.* FROM `" + bucketName + "`WHERE longUrl = $1`")
 	rows, err := bucket.ExecuteN1qlQuery(query, n1qlParams)
@@ -68,8 +73,7 @@ func main() {
 	}
 	err = cluster.Authenticate(auth)
 
-	bucketName = "example"
-	bucket, err = cluster.OpenBucket(bucketName, "")
+	bucket, err = cluster.OpenBucket("example", "")
 	if err != nil {
 		fmt.Println(err)
 	}
