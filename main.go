@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -65,21 +64,26 @@ func RootEndpoint(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
-	cluster, err := gocb.Connect("http://127.0.0.1")
-	if err != nil {
-		fmt.Println(err)
-	}
+
+    cluster, err := gocb.Connect("couchbase://localhost")
+    if nil != err {
+        panic(err)
+    }
 
 	auth := &gocb.PasswordAuthenticator{
 		Username: "Post",
 		Password: "postpost",
 	}
 
-	cluster.Authenticate(auth)
+    err = cluster.Authenticate(auth)
+    if nil != err {
+        panic(err)
+    }
+
 
 	bucket, err = cluster.OpenBucket("example", "")
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	router.HandleFunc("/create", CreateEndpoint).Methods("POST")
 	router.HandleFunc("/expand/", ExpandEndpoint).Methods("GET")
