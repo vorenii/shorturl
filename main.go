@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -81,7 +80,7 @@ func main() {
 
 	bucket, err = cluster.OpenBucket("example", "")
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	router.HandleFunc("/create", CreateEndpoint).Methods("POST")
 	router.HandleFunc("/expand/", ExpandEndpoint).Methods("GET")
