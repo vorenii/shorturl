@@ -65,13 +65,17 @@ func RootEndpoint(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
-	cluster, err := gocb.Connect("couchbase://localhost")
+	cluster, err := gocb.Connect("http://127.0.0.1")
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	auth := &gocb.PasswordAuthenticator{
 		Username: "Post",
 		Password: "postpost",
 	}
-	err = cluster.Authenticate(auth)
+
+	cluster.Authenticate(auth)
 
 	bucket, err = cluster.OpenBucket("example", "")
 	if err != nil {
